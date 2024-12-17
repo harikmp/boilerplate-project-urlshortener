@@ -12,7 +12,7 @@
   </head>
 
   <body>
-    <h1>URL Shortener Microservice</h1>
+    <!-- <h1>URL Shortener Microservice</h1> -->
     <main>
       <section>
         <form action="api/shorturl" method="POST">
@@ -28,5 +28,46 @@
     <footer>
       <p>By <a href="https://www.freecodecamp.org/">freeCodeCamp</a></p>
     </footer>
+
+    <script>
+      // Handle form submission
+      document.getElementById('urlForm').addEventListener('submit', async (event) => {
+          event.preventDefault(); // Prevent the default form submission
+
+          const urlInput = document.getElementById('url_input').value;
+          
+          if (!urlInput) {
+              alert('Please enter a URL.');
+              return;
+          }
+
+          try {
+              const response = await fetch('http://localhost:3000/api/shorturl', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      original_url: urlInput
+                  })
+              });
+
+              const data = await response.json();
+
+              // Display the response
+              if (response.ok) {
+                  document.getElementById('result').innerHTML = 
+                      `Original URL: <a href="${data.original_url}" target="_blank">${data.original_url}</a><br>
+                       Short URL: <a href="http://localhost:3000/${data.short_url}" target="_blank">http://localhost:3000/${data.short_url}</a>`;
+              } else {
+                  document.getElementById('result').innerText = `Error: ${data.error}`;
+              }
+
+          } catch (error) {
+              console.error('Error:', error);
+              document.getElementById('result').innerText = 'There was an error with your request.';
+          }
+      });
+  </script>
   </body>
 </html>
